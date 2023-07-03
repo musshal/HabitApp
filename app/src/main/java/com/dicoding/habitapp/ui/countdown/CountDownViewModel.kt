@@ -54,4 +54,6 @@ class CountDownViewModel : ViewModel() {
         super.onCleared()
         timer?.cancel()
     }
+
+    fun getInitialTime() = initialTime.value
 }
