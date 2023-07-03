@@ -37,10 +37,8 @@ class HabitListActivity : AppCompatActivity() {
         }
 
         //TODO 6 : Initiate RecyclerView with LayoutManager
-        findViewById<RecyclerView>(R.id.rv_habit).apply {
-            layoutManager = LinearLayoutManager(this@HabitListActivity)
-            adapter = habitAdapter
-        }
+        recycler = findViewById(R.id.rv_habit)
+        recycler.layoutManager = LinearLayoutManager(this@HabitListActivity)
 
         initAction()
 
@@ -48,6 +46,8 @@ class HabitListActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this, factory).get(HabitListViewModel::class.java)
 
         //TODO 7 : Submit pagedList to adapter and add intent to detail
+        habitAdapter = HabitAdapter {  }
+        recycler.adapter = habitAdapter
         viewModel.habits.observe(this) {
             habitAdapter.submitList(it)
         }
