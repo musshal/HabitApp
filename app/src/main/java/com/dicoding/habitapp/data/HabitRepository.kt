@@ -2,8 +2,11 @@ package com.dicoding.habitapp.data
 
 import android.content.Context
 import androidx.lifecycle.LiveData
+import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
+import androidx.sqlite.db.SimpleSQLiteQuery
 import com.dicoding.habitapp.utils.HabitSortType
+import com.dicoding.habitapp.utils.SortUtils
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -31,16 +34,20 @@ class HabitRepository(private val habitDao: HabitDao, private val executor: Exec
 
     //TODO 4 : Use SortUtils.getSortedQuery to create sortable query and build paged list
     fun getHabits(filter: HabitSortType): LiveData<PagedList<Habit>> {
-        throw NotImplementedError("Not yet implemented")
+        val query =
+            SimpleSQLiteQuery("SELECT * FROM habits ${SortUtils.getSorteredQuery(filter)}")
+        val config = PagedList.Config.Builder()
+            .setEnablePlaceholders(false)
+            .setPageSize(20)
+            .build()
+        return LivePagedListBuilder(habitDao.getHabits(query), config).build()
     }
 
     //TODO 5 : Complete other function inside repository
-    fun getHabitById(habitId: Int): LiveData<Habit> {
-        throw NotImplementedError("Not yet implemented")
-    }
+    fun getHabitById(habitId: Int): LiveData<Habit> = habitDao.getHabitById(habitId)
 
-    fun insertHabit(newHabit: Habit) {
-        throw NotImplementedError("Not yet implemented")
+    fun insertHabit(newHabit: Habit) = executor.execute {
+        habitDao.insertHabit(newHabit)
     }
 
     fun deleteHabit(habit: Habit) {
@@ -49,7 +56,6 @@ class HabitRepository(private val habitDao: HabitDao, private val executor: Exec
         }
     }
 
-    fun getRandomHabitByPriorityLevel(level: String): LiveData<Habit> {
-        throw NotImplementedError("Not yet implemented")
-    }
+    fun getRandomHabitByPriorityLevel(level: String): LiveData<Habit> =
+        habitDao.getRandomHabitByPriorityLevel((level))
 }
