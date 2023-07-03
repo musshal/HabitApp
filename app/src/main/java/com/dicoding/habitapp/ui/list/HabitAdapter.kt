@@ -47,6 +47,12 @@ class HabitAdapter(
             itemView.setOnClickListener {
                 onClick(habit)
             }
+
+            when (getHabit.priorityLevel) {
+                "High" -> ivPriority.setImageResource(R.drawable.ic_priority_high)
+                "Medium" -> ivPriority.setImageResource(R.drawable.ic_priority_medium)
+                "Low" -> ivPriority.setImageResource(R.drawable.ic_priority_low)
+            }
         }
 
     }
