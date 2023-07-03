@@ -34,8 +34,7 @@ class HabitRepository(private val habitDao: HabitDao, private val executor: Exec
 
     //TODO 4 : Use SortUtils.getSortedQuery to create sortable query and build paged list
     fun getHabits(filter: HabitSortType): LiveData<PagedList<Habit>> {
-        val query =
-            SimpleSQLiteQuery("SELECT * FROM habits ${SortUtils.getSorteredQuery(filter)}")
+        val query = SortUtils.getSorteredQuery(filter)
         val config = PagedList.Config.Builder()
             .setEnablePlaceholders(false)
             .setPageSize(20)
