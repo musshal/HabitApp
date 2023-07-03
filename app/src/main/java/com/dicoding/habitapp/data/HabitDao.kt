@@ -7,6 +7,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.RawQuery
 import androidx.sqlite.db.SupportSQLiteQuery
 
 //TODO 2 : Define data access object (DAO)
@@ -14,7 +15,7 @@ import androidx.sqlite.db.SupportSQLiteQuery
 @Dao
 interface HabitDao {
 
-    @Query("SELECT * FROM habits")
+    @RawQuery(observedEntities = [Habit::class])
     fun getHabits(query: SupportSQLiteQuery): DataSource.Factory<Int, Habit>
 
     @Query("SELECT * FROM habits WHERE id = :habitId")
