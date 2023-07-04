@@ -4,11 +4,10 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.sqlite.db.SupportSQLiteDatabase
 import com.dicoding.habitapp.R
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -30,24 +29,31 @@ abstract class HabitDatabase : RoomDatabase() {
 
         fun getInstance(context: Context): HabitDatabase {
             return synchronized(this) {
-                INSTANCE ?: Room
+                val instance = Room
                     .databaseBuilder(
                         context.applicationContext,
                         HabitDatabase::class.java,
                         "habits.db"
                     )
-                    .addCallback(object : Callback() {
-                        override fun onCreate(db: SupportSQLiteDatabase) {
-                            super.onCreate(db)
-                            INSTANCE?.let { habitDatabase ->
-                                CoroutineScope(Dispatchers.IO).launch {
-                                    val habitDao = habitDatabase.habitDao()
-                                    fillWithStartingData(context, habitDao)
-                                }
+                    .build()
+
+                    INSTANCE = instance
+
+                    val sharedPref = context.getSharedPreferences("myPref", Context.MODE_PRIVATE)
+                    val isLoaded = sharedPref.getBoolean("isLoaded", false)
+                    if (!isLoaded){
+                        sharedPref.edit().putBoolean("isLoaded", true).apply()
+                        runBlocking {
+                            withContext(Dispatchers.IO) {
+                                fillWithStartingData(
+                                    context,
+                                    instance.habitDao()
+                                )
                             }
                         }
-                    })
-                    .build()
+                    }
+
+                    instance
             }
         }
 
