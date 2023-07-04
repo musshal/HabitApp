@@ -29,7 +29,7 @@ class SettingsActivity : AppCompatActivity() {
 
             //TODO 11 : Update theme based on value in ListPreference
             val switchDarkMode: ListPreference? = findPreference(getString(R.string.pref_key_dark))
-            switchDarkMode?.setOnPreferenceChangeListener { preference, newValue ->
+            switchDarkMode?.setOnPreferenceChangeListener { _, newValue ->
                 val stringValue = newValue.toString()
                 if (stringValue == getString(R.string.pref_dark_follow_system)) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
