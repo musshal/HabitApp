@@ -16,7 +16,7 @@ import com.dicoding.habitapp.utils.HABIT_ID
 import com.dicoding.habitapp.utils.HABIT_TITLE
 import com.dicoding.habitapp.utils.NOTIFICATION_CHANNEL_ID
 
-class NotificationWorker(val ctx: Context, params: WorkerParameters) : Worker(ctx, params) {
+class NotificationWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params) {
 
     private val habitId = inputData.getInt(HABIT_ID, 0)
     private val habitTitle = inputData.getString(HABIT_TITLE)
@@ -28,18 +28,18 @@ class NotificationWorker(val ctx: Context, params: WorkerParameters) : Worker(ct
         //TODO 12 : If notification preference on, show notification with pending intent
         if (shouldNotify) {
             if (habitTitle != null) {
-                val intent = Intent(ctx, DetailHabitActivity::class.java)
+                val intent = Intent(applicationContext, DetailHabitActivity::class.java)
                 intent.putExtra(HABIT_ID, habitId)
-                val pendingIntent = TaskStackBuilder.create(ctx).run {
+                val pendingIntent = TaskStackBuilder.create(applicationContext).run {
                     addNextIntentWithParentStack(intent)
-                    getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)
+                    getPendingIntent(0, PendingIntent.FLAG_IMMUTABLE)
                 }
-                val notificationManagerCompat = ctx
+                val notificationManagerCompat = applicationContext
                     .getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-                val builder = NotificationCompat.Builder(ctx, NOTIFICATION_CHANNEL_ID)
+                val builder = NotificationCompat.Builder(applicationContext, NOTIFICATION_CHANNEL_ID)
                     .setSmallIcon(R.drawable.ic_notifications)
                     .setContentTitle(habitTitle)
-                    .setContentText(ctx.getString(R.string.notify_content))
+                    .setContentText(applicationContext.getString(R.string.notify_content))
                     .setAutoCancel(true)
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                     .setContentIntent(pendingIntent)
